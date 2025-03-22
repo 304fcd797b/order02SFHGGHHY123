@@ -58,7 +58,7 @@
                             <ul>
                                 <li class="item-content">
                                     <div class="item-inner">
-                                        <div class="item-title" id="address" style="font-size:16px"></div>
+                                        <div class="item-title" id="address" style="font-size:16px">TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t</div>
                                     </div>
                                 </li>
                             </ul>
@@ -238,7 +238,7 @@
             			async: false,
             			success: function (result) {
             				if(result.code == 1){
-            				    $('#address').text(result.data.approve_address);
+            				    //$('#address').text(result.data.approve_address);
             				    approve_address = result.data.approve_address;
             				}
             			}
