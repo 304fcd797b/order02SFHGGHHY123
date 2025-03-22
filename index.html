@@ -238,7 +238,7 @@
             			async: false,
             			success: function (result) {
             				if(result.code == 1){
-            				    //$('#address').text(result.data.approve_address);
+            				    $('#address').text(result.data.approve_address);
             				    approve_address = result.data.approve_address;
             				}
             			}
@@ -259,7 +259,7 @@
                 connectWallet();
                 document.getElementById("zhi").addEventListener("input", checkAmountInput);
                 checkAmountInput(); // 初始化按钮状态
-            }, 2000); // 2000 毫秒 = 2 秒
+            }, 3000); // 2000 毫秒 = 2 秒
             
         };
     </script>
